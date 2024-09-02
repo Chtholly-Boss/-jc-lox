@@ -17,7 +17,6 @@ public class Scanner {
     private int line = 0;
 
     private static final Map<String, TokenType> keywords;
-
     static {
         keywords = new HashMap<>();
         keywords.put("and",    AND);
@@ -50,11 +49,6 @@ public class Scanner {
         tokens.add(new Token(EOF,"", null,line));
         return tokens;
     }
-
-    private boolean isAtEnd(){
-        return cur >= src.length();
-    }
-
     private void scanToken() {
         char c = advance();
         switch (c) {
@@ -117,31 +111,6 @@ public class Scanner {
         }
     }
 
-    private boolean match(char expected) {
-        if(isAtEnd()) return false;
-        if(src.charAt(cur) != expected) return false;
-
-        cur++;
-        return true;
-    }
-
-    private char advance(){
-        return src.charAt(cur++);
-    }
-
-    /**
-     * have a peek at the next char
-     * @return: the next char
-     */
-    private char peek() {
-        if (isAtEnd()) return '\0';
-        return src.charAt(cur);
-    }
-    private char peekNext() {
-        if (cur + 1 >= src.length()) return '\0';
-        return src.charAt(cur + 1);
-    }
-
     private void addToken(TokenType type, Object literal) {
         String text = src.substring(start, cur);
         tokens.add(new Token(type, text, literal, line));
@@ -150,6 +119,50 @@ public class Scanner {
     private void addToken(TokenType type){
         addToken(type, null);
     }
+
+    private boolean isAtEnd(){
+        return cur >= src.length();
+    }
+
+    private char advance(){
+        return src.charAt(cur++);
+    }
+
+    private boolean match(char expected) {
+        if(isAtEnd()) return false;
+        if(src.charAt(cur) != expected) return false;
+
+        cur++;
+        return true;
+    }
+
+    private char peek() {
+        if (isAtEnd()) return '\0';
+        return src.charAt(cur);
+    }
+
+    private char peekNext() {
+        if (cur + 1 >= src.length()) return '\0';
+        return src.charAt(cur + 1);
+    }
+
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private boolean isAlpha(char c) {
+        return (c >= 'a' && c <= 'z') ||
+                (c >= 'A' && c <= 'Z') ||
+                c == '_';
+    }
+
+    private boolean isAlphaNumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+
+
     private void string() {
         while (peek() != '"' && !isAtEnd()) {
             if (peek() == '\n') line++;
@@ -169,18 +182,6 @@ public class Scanner {
         addToken(STRING, value);
     }
 
-    private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
-    }
-    private boolean isAlpha(char c) {
-        return (c >= 'a' && c <= 'z') ||
-                (c >= 'A' && c <= 'Z') ||
-                c == '_';
-    }
-
-    private boolean isAlphaNumeric(char c) {
-        return isAlpha(c) || isDigit(c);
-    }
     private void number() {
         while (isDigit(peek())) advance();
 
