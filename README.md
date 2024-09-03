@@ -85,18 +85,122 @@ Also, you can report error while lexing.
 #### Parsing
 The next step is to implement a `Parser` class to parse the tokens.
 
+Firstly, we need to define the grammar of the language and represent the code using a AST.
+![grammar-0](./figures/parse-grammar-0.png)
+
+```java
+public class Expr {
+  public abstract <R> R accept(Visitor<R> visitor);
+  public static class Binary extends Expr {
+    public final Expr left;
+    public final Token operator;
+    public final Expr right;
+    public Binary(Expr left, Token operator, Expr right) {
+      this.left = left;
+      this.operator = operator;
+      this.right = right;
+    }
+  ...
+}
+```
+
+We use **Visitor Pattern** to deal with the AST.
+Using Visitor Pattern, we could do different things on different nodes in the AST, without messing up the code structure.
+
+Then we can implement the `Parser` class.
+We should deal with ambiguity first. Commonly, we determine the follows:
+
+* Precedence
+* Associativity: left or right
+
+![grammar-precedence-associativity](./figures/parse-grammar-precedence.png)
+
+For precedence, we can say that "**the lower precedence rule can be replaced by the higher one**". So we can construct a grammar like:
+
+![grammar-1](./figures/parse-grammar-1.png)
+
+A Parser should:
+
+* Given a valid sequence of tokens, produce a corresponding syntax tree.
+* Given an _invalid_ sequence of tokens, detect any errors and tell the user about their mistakes.
+
+For the first point, we can use a recursive descent parser to implement the parser. For the second point, we can use error recovery to deal with it.
+
+Token-Wise Helpers:
+
+* `consume`: check if the next token matches the given type, and move the position if it does
+* `match`: check if the current token matches any of the given types, and move the position if it does
+* `check`: check if the current token matches the given type, but do not move the position
+* `peek`: get the current token without moving the position
+* `previous`: get the previous token
+* `isAtEnd`: check if we have reached the end of the tokens
+* `advance`: move the position to the next token
+
+Then translate the **Rules** into **Methods** one by one.
+```java
+private Expr expression() {
+    return equality();
+}
+private Expr equality() {
+    Expr expr = comparison();
+
+    while (match(BANG_EQUAL, EQUAL_EQUAL)) {
+        Token operator = previous();
+        Expr right = comparison();
+        expr = new Expr.Binary(expr, operator, right);
+    }
+
+    return expr;
+}
+```
+
+For syntax errors, we can throw a `ParseError` exception and catch it in its caller. Then do `synchronize` to recover from the error.
+
+```java
+private void synchronize() {
+    advance();
+
+    while (!isAtEnd()) {
+        if (previous().type == SEMICOLON) return;
+
+        switch (peek().type) {
+            case CLASS:
+            case FUN:
+            case VAR:
+            case FOR:
+            case IF:
+            case WHILE:
+            case PRINT:
+            case RETURN:
+                return;
+        }
+
+        advance();
+    }
+}
+```
+
 #### Evaluation
 The last step is to implement an `Interpreter` class to evaluate the AST.
 
-### Stage 1: Control Flow
+Now that we have a syntax tree, we can evaluate it. We can use the visitor pattern again to do this, in **post-order**.
 
-### Stage 2: Functions
+For example, for a binary expression, we can evaluate the left and right expressions first, and then apply the operator to the results.
 
-### Stage 3: Classes
+```java
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+  @Override
+  public Object visitBinaryExpr(Expr.Binary expr) {
+    Object left = evaluate(expr.left);
+    Object right = evaluate(expr.right);
 
-
-## Clox
-
+    switch (expr.operator.type) {
+      ...
+    }
+  }
+  ...
+}
+```
 
 ## Java Mess
 Static Blocks

@@ -51,7 +51,7 @@ public class AstPrinter implements Expr.ExprVisitor<String> {
         System.out.println(new AstPrinter().print(expression));
     }
 
-    private String print(Expr expression) {
+    public String print(Expr expression) {
         return expression.accept(this);
     }
 }
