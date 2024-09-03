@@ -1,16 +1,6 @@
 import os
 import argparse
 
-# define the basename
-basename = 'Expr'
-# define the types
-types = [
-  'Binary: Expr left, Token operator, Expr right',
-  'Grouping: Expr expression',
-  'Literal: Object value',
-  'Unary: Token operator, Expr right'
-]
-
 def defineVisitor(file,basename,types):
   # declare a interface with generic type
   file.write(f'  public interface {basename}Visitor<R> {{\n')
@@ -94,6 +84,26 @@ if __name__ == '__main__':
   output_path = args.output
   if output_path is None:
     output_path = os.getcwd()
-  # call defineAst
-  defineAst(output_path, basename, types)
+  
+  # Generate Expr AST classes
+  defineAst(output_path,
+            "Expr", 
+            [
+              'Binary: Expr left, Token operator, Expr right',
+              'Grouping: Expr expression',
+              'Literal: Object value',
+              'Unary: Token operator, Expr right'
+            ]
+          )
+  
+  # Generate Stmt AST classes
+  defineAst(output_path,
+            "Stmt",
+            [
+              'Expression: Expr expression',
+              'Print: Expr expression'
+            ]
+          )
+  
+
   

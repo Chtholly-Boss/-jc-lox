@@ -5,7 +5,12 @@ The Development process is documented here.
 
 ## Jlox
 ### Stage 0: Lex-Parse-Evaluate
-This stage corresponding Chapter 4-7 of the book.
+This stage covers:
+* Chapter 4: Scanning
+* Chapter 5: Representing Code
+* Chapter 6: Parsing Expressions
+* Chapter 7: Evaluating Expressions
+
 
 #### Setup
 Firstly, we need to have some feedback to see the result of our interpreter.
@@ -202,6 +207,23 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 }
 ```
 
+### Stage 1: Statement
+This stage covers:
+* Chapter 8: Statements and State
+* Chapter 9: Control Flow
+
+### Stage 2: Functions
+This stage covers:
+* Chapter 10: Functions
+* Chapter 11: Resolving and Binding
+
+### Stage 3: Classes
+This stage covers:
+* Chapter 12: Classes
+* Chapter 13: Inheritance
+
+
+
 ## Java Mess
 Static Blocks
 :   In java, static blocks are used to **initialize the static variables of a class**. They are executed when the class is loaded into memory. Static blocks are **executed only once**, no matter how many objects of the class are created. They are used to initialize the static variables and perform any other static initialization tasks.
@@ -226,21 +248,48 @@ public enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
     COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 
-    // One or two character tokens.
-    BANG, BANG_EQUAL,
-    EQUAL, EQUAL_EQUAL,
-    GREATER, GREATER_EQUAL,
-    LESS, LESS_EQUAL,
-
-    // Literals.
-    IDENTIFIER, STRING, NUMBER,
-
     // Keywords.
     AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
-
+    
     EOF
 }
 ```
 
-    
+Extended Switch-Case
+: Features:  
+  * Multiple Labels
+  * No need to `break`
+  * Arrow Syntax
+  * Expression Support
+
+```java
+int day = 3;
+String dayType = switch (day) {
+    case 1, 7 -> "Weekend";
+    case 2, 3, 4, 5, 6 -> "Weekday";
+    default -> "Invalid day";
+};
+
+System.out.println(dayType); // Output: Weekday
+```
+
+varargs
+: In Java, varargs (variable-length arguments) is a feature that allows a method to accept a variable number of arguments of the same type. It is declared by using three dots (`...`) after the type of the parameter. The method can then access the varargs parameter as an array.
+
+**The varargs parameter must be the last parameter in the method's parameter list.**
+
+```java
+public class VarargsExample {
+    public static void printNumbers(int... numbers) {
+        for (int number : numbers) {
+            System.out.println(number);
+        }
+    }
+
+    public static void main(String[] args) {
+        printNumbers(1, 2, 3, 4, 5);
+        }
+    }
+}
+```
