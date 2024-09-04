@@ -1,6 +1,6 @@
-package types;
+package lox.types;
 
-import enums.TokenType;
+import lox.enums.TokenType;
 
 public class Token {
     public final TokenType type;

@@ -1,4 +1,6 @@
-import types.Token;
+package lox;
+
+import lox.types.Token;
 
 public class RuntimeError extends RuntimeException{
     final Token token;

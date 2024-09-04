@@ -1,6 +1,8 @@
-import enums.TokenType;
-import types.Expr;
-import types.Token;
+package lox;
+
+import lox.enums.TokenType;
+import lox.types.Stmt;
+import lox.types.Token;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,10 +53,10 @@ public class Lox {
         List<Token> tokens = scanner.scanTokens();
 
         Parser parser = new Parser(tokens);
-        Expr expression = parser.parse();
+        List<Stmt> statements = parser.parse();
 
         if (hadError) return;
-        interpreter.interpret(expression);
+        interpreter.interpret(statements);
     }
 
     static void runtimeError(RuntimeError error) {

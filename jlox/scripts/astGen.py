@@ -20,7 +20,7 @@ def defineAst(path, basename, types):
   # if exists, overwrite it
   with open(os.path.join(path, basename + '.java'), 'w') as f:
     # write the package declaration
-    f.write('package types;\n\n')
+    f.write('package lox.types;\n\n')
     # write the import statements
     f.write('import java.util.List;\n\n')
     # write the class declaration
@@ -89,10 +89,13 @@ if __name__ == '__main__':
   defineAst(output_path,
             "Expr", 
             [
+              'Assign: Token name, Expr value',
               'Binary: Expr left, Token operator, Expr right',
               'Grouping: Expr expression',
               'Literal: Object value',
-              'Unary: Token operator, Expr right'
+              'Logical: Expr left, Token operator, Expr right',
+              'Unary: Token operator, Expr right',
+              'Variable: Token name'
             ]
           )
   
@@ -100,8 +103,12 @@ if __name__ == '__main__':
   defineAst(output_path,
             "Stmt",
             [
+              'Block: List<Stmt> statements',
               'Expression: Expr expression',
-              'Print: Expr expression'
+              'Print: Expr expression',
+              'Var: Token name, Expr initializer',
+              'If: Expr condition, Stmt thenBranch, Stmt elseBranch',
+              'While: Expr condition, Stmt body'
             ]
           )
   

@@ -1,12 +1,14 @@
-import enums.TokenType;
-import types.Token;
+package lox;
+
+import lox.enums.TokenType;
+import lox.types.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static enums.TokenType.*;
+import static lox.enums.TokenType.*;
 
 public class Scanner {
     private final String src;

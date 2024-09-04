@@ -212,6 +212,70 @@ This stage covers:
 * Chapter 8: Statements and State
 * Chapter 9: Control Flow
 
+Unlike expression, statements don't aim to return a value. Instead, they change the state of the program.
+So we better constuct a `Stmt` interface and implement it for each type of statement.
+
+We implement statements following the same pattern as expressions like:
+* Define Grammar Rules
+* Parse the statement
+* Interpret statement
+
+We need to implement:
+* Variable Declaration
+* Assignment
+* Print Statement
+* Block Statement
+* If Statement
+* While Statement
+* For Statement
+
+We should first create an environment to store States.
+Using `HashMap` to do this is ok.
+
+```java
+// Variable Declaration
+private Stmt declaration() {
+    try {
+        if (match(VAR)) return varDeclaration();
+        return statement();
+    } catch (ParseError error) {
+        synchronize();
+        return null;
+    }
+}
+
+private Stmt statement() {
+    if (match(IF)) return ifStatement();
+    if (match(PRINT)) return printStatement();
+    if (match(LEFT_BRACE)) return new Stmt.Block(block());
+    if (match(WHILE)) return whileStatement();
+    if (match(FOR)) return forStatement();
+    return expressionStatement();
+}
+
+// For each statement, do the corresponding parsing
+private Stmt whileStatement() {
+    consume(LEFT_PAREN, "Expect '(' after 'while'.");
+    Expr condition = expression();
+    consume(RIGHT_PAREN, "Expect ')' after condition.");
+    Stmt body = statement();
+
+    return new Stmt.While(condition, body);
+}
+...
+```
+
+Interpretation of statements is more direct. For example, for a print statement, we can simply evaluate the expression and print the result.
+
+```java
+@Override
+public Void visitPrintStmt(Stmt.Print stmt) {
+    Object value = evaluate(stmt.expression);
+    System.out.println(stringify(value));
+    return null;
+}
+```
+
 ### Stage 2: Functions
 This stage covers:
 * Chapter 10: Functions

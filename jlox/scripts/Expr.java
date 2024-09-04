@@ -1,4 +1,4 @@
-package types;
+package lox.types;
 
 import java.util.List;
 
